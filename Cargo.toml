@@ -1,0 +1,3 @@
+[workspace]
+members = [ "abilisk-firewall-client", "abilisk-firewall-kubesync","abilisk-firewall-server"]
+resolver = "2"

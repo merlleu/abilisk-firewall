@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package eu.merll.abilisk.firewall.v1;
+
+service RuleSetsService {
+    rpc ListRuleSets(ListRuleSetsRequest) returns (ListRuleSetsResponse) {}
+    rpc GetRuleSet(GetRuleSetRequest) returns (GetRuleSetResponse) {}
+    rpc PutRuleSet(PutRuleSetRequest) returns (PutRuleSetResponse) {}
+    rpc DeleteRuleSet(DeleteRuleSetRequest) returns (DeleteRuleSetResponse) {}
+}
+
+message RuleSet {
+    string id = 1;
+    repeated Rule rules = 2;
+}
+
+message Rule {
+    Protocol protocol = 1;
+    repeated PortSelector ports = 2;
+    repeated string nodepools = 3;
+
+    enum Protocol {
+        TCP = 0;
+        UDP = 1;
+    }
+    
+    message PortSelector {
+        oneof port {
+            uint32 single = 1;
+            PortRange range = 2;
+        }
+    }
+    
+    message PortRange {
+        uint32 start = 1;
+        uint32 end = 2;
+    }
+}
+
+message ListRuleSetsRequest {}
+
+message ListRuleSetsResponse {
+    repeated RuleSet ruleSets = 1;
+}
+
+message GetRuleSetRequest {
+    string id = 1;
+}
+
+message GetRuleSetResponse {
+    RuleSet ruleSet = 1;
+}
+
+message PutRuleSetRequest {
+    RuleSet ruleSet = 1;
+}
+
+message PutRuleSetResponse {
+    RuleSet ruleSet = 1;
+}
+
+message DeleteRuleSetRequest {
+    string id = 1;
+}
+
+message DeleteRuleSetResponse {}
+
+service NodeService {
+    rpc GetNodes(GetNodesRequest) returns (GetNodesResponse) {}
+    rpc AddNode(AddNodeRequest) returns (AddNodeResponse) {}
+    rpc DeleteNode(DeleteNodeRequest) returns (DeleteNodeResponse) {}
+}
+
+message GetNodesRequest {
+    string nodepool = 1;
+}
+
+message GetNodesResponse {
+    repeated Node nodes = 1;
+}
+
+message Node {
+    string id = 1;
+    string ip = 2;
+}
+
+message AddNodeRequest {
+    Node node = 1;
+}
+
+message AddNodeResponse {
+    Node node = 1;
+}
+
+message DeleteNodeRequest {
+    string nodepool = 1;
+    string id = 2;
+}
+
+message DeleteNodeResponse {}
+
+service ClientService {
+    rpc GetRawNFTUpdates(GetRawNFTUpdatesRequest) returns (stream RawNFTUpdate) {}
+}
+
+message GetRawNFTUpdatesRequest {
+    string ruleset = 1;
+}
+
+message RawNFTUpdate {
+    string raw = 1;
+}
